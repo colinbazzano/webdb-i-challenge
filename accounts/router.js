@@ -70,7 +70,18 @@ router.put("/:id", (req, res) => {
     });
 });
 
-router.delete("/:id", (req, res) => {});
+router.delete("/:id", (req, res) => {
+  db("accounts")
+    .where({ id: req.params.id })
+    .del()
+    .then(count => {
+      res.status(200).json({ message: `${count} record(s) deleted.` });
+    })
+    .catch(error => {
+      console.log(error);
+      res.status(500).json({ errorMessage: "Error removing the account." });
+    });
+});
 
 function validateAccountId(req, res, next) {
   const id = req.params.id;
