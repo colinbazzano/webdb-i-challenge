@@ -51,7 +51,7 @@ router.post("/", validateAccount, (req, res) => {
     });
 });
 
-router.put("/:id", (req, res) => {
+router.put("/:id", validateAccountId, (req, res) => {
   const { id } = req.params;
   const changes = req.body;
   db("accounts")
@@ -83,12 +83,13 @@ router.delete("/:id", (req, res) => {
     });
 });
 
+// uncertain on using middleware in these functions. It wants validation and I can do it in line but I wanted to try and use middleware. Ask Will about clarification.
 function validateAccountId(req, res, next) {
   const id = req.params.id;
   db.get(id)
     .then(id => {
       id
-        ? (req.project = id && next())
+        ? next()
         : res.status(400).json({ message: "Account ID does not exist. " });
     })
     .catch(error => {
