@@ -51,7 +51,24 @@ router.post("/", validateAccount, (req, res) => {
     });
 });
 
-router.put("/:id", (req, res) => {});
+router.put("/:id", (req, res) => {
+  const { id } = req.params;
+  const changes = req.body;
+  db("accounts")
+    .where({ id })
+    .update(changes)
+    .then(count => {
+      count > 0
+        ? res
+            .status(200)
+            .json({ message: `${count} record(s) have been updated. ` })
+        : res.status(404).json({ message: "Record not found. " });
+    })
+    .catch(error => {
+      console.log(error);
+      res.status(500).json({ errorMessage: "Error editing the account." });
+    });
+});
 
 router.delete("/:id", (req, res) => {});
 
